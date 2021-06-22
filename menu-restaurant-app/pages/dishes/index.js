@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     },
     dishCard: {
       marginRight: 15,
-      width: 250,
+      width: 240,
       height: 280,
       display: 'flex',
       alignItems: 'flex-end',

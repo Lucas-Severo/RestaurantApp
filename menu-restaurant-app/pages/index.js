@@ -1,22 +1,15 @@
 import Head from 'next/head'
 import { makeStyles } from '@material-ui/core/styles';
-import { 
-    Avatar,
-    Button, 
-    Drawer, 
-    Container,
-    Modal,
-    Card,
-    CardContent
-} from '@material-ui/core';
+import { Container } from '@material-ui/core';
 import { useState } from 'react';
 import DrawerLeft from './drawer-left';
 import TabOptions from './tabs';
 import Dishes from './dishes';
 import ModalDish from './modal-dish';
+import OrderDrawer from './drawer-order';
 
 const drawerWidth = 100
-const orderWidth = 300
+const orderWidth = 350
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,11 +23,6 @@ const useStyles = makeStyles((theme) => ({
   },
   label: {
     textTransform: 'capitalize',
-  },
-  orderDrawer: {
-    background: '#1F1D2B',
-    width: orderWidth,
-    alignItems: 'center'
   },
   appBar: {
     width: `calc(100% - ${drawerWidth+orderWidth}px)`,
@@ -87,6 +75,39 @@ export default function Home() {
     available: 10
   }]
 
+  const orders = [{
+    id: 1,
+    image: '/images/image4.png',
+    description: 'Spicy seasoned seafood noodles',
+    price: '$5',
+    totalPrice: '$10',
+    quantity: 2
+  },
+  {
+    id: 2,
+    image: '/images/image4.png',
+    description: 'Spicy seasoned seafood noodles',
+    price: '$5',
+    totalPrice: '$10',
+    quantity: 2
+  },
+  {
+    id: 3,
+    image: '/images/image4.png',
+    description: 'Spicy seasoned seafood noodles',
+    price: '$5',
+    totalPrice: '$10',
+    quantity: 2
+  },
+  {
+    id: 4,
+    image: '/images/image4.png',
+    description: 'Spicy seasoned seafood noodles',
+    price: '$5',
+    totalPrice: '$10',
+    quantity: 2
+  }]
+
   const handleOpen = (dishIndex) => {
     setSelectedItem(lista[dishIndex])
     setOpenModal(true);
@@ -122,14 +143,7 @@ export default function Home() {
 
           <Dishes lista={lista} onClick={handleOpen}/>
 
-          <Drawer 
-          anchor={"right"} 
-          variant="permanent"
-          open 
-          classes={{
-            paper: classes.orderDrawer
-          }}>
-          </Drawer>
+          <OrderDrawer orders={orders}/>
       </Container>
 
       <ModalDish 
