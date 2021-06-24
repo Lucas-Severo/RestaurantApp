@@ -31,15 +31,8 @@ const DividerWhite = withStyles({
     }
 })(Divider)
 
-export default function TabOptions() {
+export default function TabOptions({handleChange, value}) {
     const classes = useStyles();
-
-    const [value, setValue] = useState(0);
-
-    const handleChange = (event, newValue) => {
-        console.log(newValue)
-        setValue(newValue);
-    };
 
     return (
         <Paper
@@ -49,7 +42,7 @@ export default function TabOptions() {
               value={value}
               indicatorColor="primary"
               textColor="primary"
-              onChange={handleChange}
+              onChange={(event, value) => handleChange(event, value)}
               variant="scrollable"
               aria-label="disabled tabs example"
             >
@@ -57,7 +50,6 @@ export default function TabOptions() {
               <TabDefaultWhite label="Cold Dishes"/>
               <TabDefaultWhite label="Soup" />
               <TabDefaultWhite label="Brill" />
-              <TabDefaultWhite label="Soup" />
               <TabDefaultWhite label="Dessert" />
             </Tabs>
             <DividerWhite light/>

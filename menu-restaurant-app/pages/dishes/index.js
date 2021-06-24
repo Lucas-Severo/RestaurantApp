@@ -50,18 +50,18 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 
-export default function Dishes({lista, onClick}) {
+export default function Dishes({dishes, onClick}) {
     const classes = useStyles();
 
     return (
         <div className={classes.dishesContainer}>
             <label className={classes.dishesTitle}>
-                Choose Dishes
+                Choose Dishes ({dishes.length})
             </label>
 
             <Box display="flex" flexWrap="wrap">
                 {
-                lista.map((dish, index) => (
+                dishes.map((dish, index) => (
                     <Card 
                     key={dish.id}
                     elevation={0}

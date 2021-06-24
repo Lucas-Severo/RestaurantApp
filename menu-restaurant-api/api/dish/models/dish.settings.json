@@ -1,0 +1,47 @@
+{
+  "kind": "collectionType",
+  "collectionName": "tb_dish",
+  "info": {
+    "name": "dish",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "image": {
+      "collection": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ],
+      "plugin": "upload",
+      "required": false,
+      "pluginOptions": {}
+    },
+    "description": {
+      "type": "text"
+    },
+    "price": {
+      "type": "decimal"
+    },
+    "available": {
+      "type": "integer"
+    },
+    "categoria": {
+      "type": "enumeration",
+      "enum": [
+        "HOT_DISHES",
+        "COLD_DISHES",
+        "SOUP",
+        "BRILL",
+        "DESSERT"
+      ]
+    }
+  }
+}

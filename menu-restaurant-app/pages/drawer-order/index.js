@@ -103,11 +103,10 @@ const useStyles = makeStyles((theme) => ({
       position: 'fixed',
       backgroundColor: '#1F1D2B',
       height: 130,
-      width: orderWidth,
       bottom: 0
     },
     orderItemPaymentLayout: {
-      width: '320px',
+      width: 330,
       display: 'flex',
       flexDirection: 'column',
       gap: 10
@@ -177,21 +176,20 @@ export default function OrderDrawer({orders}) {
                   </Card>
                 ))}
             </Box>
-            
-            <Card className={classes.orderItemPayment}>
+            <Card elevation={0} className={classes.orderItemPayment}>
               <Divider/>
-                <CardContent className={`${classes.orderItemPaymentLayout}`}>
-                  <div className={`${classes.flexItem} ${classes.spaceBetween}`}>
-                    <label className={classes.textGray}>Discount</label>
-                    <label className={classes.textWhite}>$0</label>
-                  </div>
-                  <div className={`${classes.flexItem} ${classes.spaceBetween}`}>
-                    <label className={classes.textGray}>Sub Total</label>
-                    <label className={classes.textWhite}>$ 21,03</label>
-                  </div>
-                  <Button className={classes.buttonConfirmPayment} variant="contained" color="primary">
-                    Continue to Payment
-                  </Button>
+              <CardContent className={`${classes.orderItemPaymentLayout}`}>
+                <div className={`${classes.flexItem} ${classes.spaceBetween}`}>
+                  <label className={classes.textGray}>Discount</label>
+                  <label className={classes.textWhite}>$0</label>
+                </div>
+                <div className={`${classes.flexItem} ${classes.spaceBetween}`}>
+                  <label className={classes.textGray}>Sub Total</label>
+                  <label className={classes.textWhite}>$ 21,03</label>
+                </div>
+                <Button className={classes.buttonConfirmPayment} variant="contained" color="primary">
+                  Continue to Payment
+                </Button>
               </CardContent>
             </Card>
         </Drawer>
