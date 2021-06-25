@@ -58,6 +58,16 @@ export default function Home() {
   async function buscarPratos() {
       const response = await fetch("http://localhost:1337/dishes?categoria="+categories[value])
       const dishes = await response.json()
+
+      for (let dish of dishes) {
+        for (let orderDish of orderDishes) {
+          if (dish.id === orderDish.id) {
+            dish.available -= orderDish.quantity
+            break
+          }
+        }
+      }
+
       renderImages(dishes)
       setDishes(dishes)
   }
@@ -67,7 +77,7 @@ export default function Home() {
   }
 
   function renderImage(object) {
-    object.image = `http://localhost:1337${object.image[0].url}`
+    object.imageRendered = `http://localhost:1337${object.image[0].url}`
   }
 
   const handleOpen = (dishIndex) => {
@@ -79,29 +89,51 @@ export default function Home() {
     setOpenModal(false);
   };
 
-  const handleAddItem = (item) => {
-    let itemAlreadyAdded = false
-    for (let dish of orderDishes) {
+  const handleAddItem = async(item) => {
+    const dish = getDishByItem(item)
+
+    if (dish.available > 0) {
+      let itemAlreadyAdded = false
+      for (let dish of orderDishes) {
+        if (dish.id === item.id) {
+          ++dish.quantity
+          dish.totalPrice = (dish.quantity * dish.price)
+          itemAlreadyAdded = true
+          break
+        }
+      }
+
+      dish.available--;
+
+      if (!itemAlreadyAdded) {
+        item.quantity = 1
+        item.totalPrice = (item.quantity * item.price)
+        orderDishes.push(item)
+      }
+
+      setOrderDishes([...orderDishes])
+      setDishes([...dishes])
+    }
+  }
+
+  const getDishByItem = (item) => {
+    for (let dish of dishes) {
       if (dish.id === item.id) {
-        ++dish.quantity
-        dish.totalPrice = (dish.quantity * dish.price)
-        itemAlreadyAdded = true
-        break
+        return dish
       }
     }
-
-    if (!itemAlreadyAdded) {
-      item.quantity = 1
-      item.totalPrice = (item.quantity * item.price)
-      orderDishes.push(item)
-    }
-
-    setOrderDishes([...orderDishes])
   }
 
   const handleDeleteItem = (item) => {
     for (let index = 0; index < orderDishes.length; index++) {
       if (orderDishes[index].id === item.id) {
+        for (let dish of dishes) {
+          if (dish.id === item.id) {
+            dish.available += orderDishes[index].quantity
+            break
+          }
+        }
+
         orderDishes.splice(index, 1);
         setOrderDishes([...orderDishes])
         break;
@@ -114,6 +146,16 @@ export default function Home() {
     await buscarPratos()
   };
 
+  const updateItem = async(item) => {
+    await fetch(`http://localhost:1337/dishes/${item.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(item)
+    })
+  }
+
   return (
     <div className={classes.scrollHide}>
       <Head>
@@ -124,8 +166,6 @@ export default function Home() {
 
       <Container maxWidth="xl" classes={{root: classes.root}} className={classes.appBar}>
           <DrawerLeft/>
-
-          {/* Meio */}
           
           <header className={`${classes.headerTitle} ${classes.paddingTB20}`}>
             <label className={classes.title}>

@@ -169,7 +169,7 @@ export default function OrderDrawer({orderDishes, handleDeleteItem}) {
                         <CardContent className={`${classes.orderLayout}`}>
                             <div className={classes.orderInfo}>
                               <Avatar
-                              src={order.image}
+                              src={order.imageRendered}
                               className={classes.itemImage}/>
                               <div className={classes.info}>
                                 <label className={`${classes.textEllipsis} ${classes.itemDescription}`}>{order.description}</label>

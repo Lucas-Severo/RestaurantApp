@@ -94,7 +94,7 @@ export default function ModalDish({selectedItem, openModal, handleClose, handleA
           <Container maxWidth="sm" className={classes.modalContainer}>
             <Avatar 
               alt="Remy Sharp" 
-              src={selectedItem.image}
+              src={selectedItem.imageRendered}
               className={classes.dishImage}/>
             <div className={classes.modalDetail}>
               <label>{selectedItem.description}</label>

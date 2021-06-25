@@ -72,11 +72,11 @@ export default function Dishes({dishes, onClick}) {
                         <CardContent className={`${classes.darkBackground} ${classes.dishLayout}`}>
                             <Avatar 
                             alt="Remy Sharp" 
-                            src={dish.image}
+                            src={dish.imageRendered}
                             className={classes.dishImage}/>
                             <label className={classes.dishName}>{dish.description}</label>
                             <label>{CurrencyFormatter.format(dish.price)}</label>
-                            <label>{dish.available} Bowls available</label>
+                            <label>{dish.available} available</label>
                         </CardContent>
                     </Card>
                 ))
