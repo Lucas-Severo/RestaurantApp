@@ -5,6 +5,7 @@ import {
     Card,
     CardContent
 } from '@material-ui/core';
+import CurrencyFormatter from '../utils/CurrencyFormatter';
 
 const useStyles = makeStyles((theme) => ({
     dishesContainer: {
@@ -74,7 +75,7 @@ export default function Dishes({dishes, onClick}) {
                             src={dish.image}
                             className={classes.dishImage}/>
                             <label className={classes.dishName}>{dish.description}</label>
-                            <label>{dish.price}</label>
+                            <label>{CurrencyFormatter.format(dish.price)}</label>
                             <label>{dish.available} Bowls available</label>
                         </CardContent>
                     </Card>

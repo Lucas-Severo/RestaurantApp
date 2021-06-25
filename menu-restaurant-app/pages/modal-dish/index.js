@@ -8,6 +8,7 @@ import {
     CardContent
 } from '@material-ui/core';
 import { Close } from '@material-ui/icons'
+import CurrencyFormatter from '../utils/CurrencyFormatter';
 
 const useStyles = makeStyles((theme) => ({
     center: {
@@ -60,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-export default function ModalDish({selectedItem, openModal, handleClose}) {
+export default function ModalDish({selectedItem, openModal, handleClose, handleAddItem}) {
     const classes = useStyles();
 
     return (
@@ -97,10 +98,14 @@ export default function ModalDish({selectedItem, openModal, handleClose}) {
               className={classes.dishImage}/>
             <div className={classes.modalDetail}>
               <label>{selectedItem.description}</label>
-              <label>Price: {selectedItem.price}</label>
+              <label>Price: {CurrencyFormatter.format(selectedItem.price)}</label>
               <label>Available quantity: {selectedItem.available}</label>
             </div>
-            <Button variant="outlined" disableElevation color="primary">
+            <Button 
+              variant="outlined" 
+              disableElevation 
+              color="primary"
+              onClick={() => handleAddItem(selectedItem)}>
               Adicionar
             </Button>
           </Container>

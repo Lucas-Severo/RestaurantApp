@@ -48,6 +48,7 @@ export default function Home() {
   const [openModal, setOpenModal] = useState(false)
   const [selectedItem, setSelectedItem] = useState({})
   const [dishes, setDishes] = useState([])
+  const [orderDishes, setOrderDishes] = useState([])
   const [value, setValue] = useState(0)
 
   useEffect(async () => {
@@ -69,47 +70,6 @@ export default function Home() {
     object.image = `http://localhost:1337${object.image[0].url}`
   }
 
-  const orders = [{
-    id: 1,
-    image: '/images/image4.png',
-    description: 'Spicy seasoned seafood noodles',
-    price: '$5',
-    totalPrice: '$10',
-    quantity: 2
-  },
-  {
-    id: 2,
-    image: '/images/image4.png',
-    description: 'Spicy seasoned seafood noodles',
-    price: '$5',
-    totalPrice: '$10',
-    quantity: 2
-  },
-  {
-    id: 3,
-    image: '/images/image4.png',
-    description: 'Spicy seasoned seafood noodles',
-    price: '$5',
-    totalPrice: '$10',
-    quantity: 2
-  },
-  {
-    id: 4,
-    image: '/images/image4.png',
-    description: 'Spicy seasoned seafood noodles',
-    price: '$5',
-    totalPrice: '$10',
-    quantity: 2
-  },
-  {
-    id: 5,
-    image: '/images/image4.png',
-    description: 'Spicy seasoned seafood noodles',
-    price: '$5',
-    totalPrice: '$10',
-    quantity: 2
-  }]
-
   const handleOpen = (dishIndex) => {
     setSelectedItem(dishes[dishIndex])
     setOpenModal(true);
@@ -118,6 +78,36 @@ export default function Home() {
   const handleClose = () => {
     setOpenModal(false);
   };
+
+  const handleAddItem = (item) => {
+    let itemAlreadyAdded = false
+    for (let dish of orderDishes) {
+      if (dish.id === item.id) {
+        ++dish.quantity
+        dish.totalPrice = (dish.quantity * dish.price)
+        itemAlreadyAdded = true
+        break
+      }
+    }
+
+    if (!itemAlreadyAdded) {
+      item.quantity = 1
+      item.totalPrice = (item.quantity * item.price)
+      orderDishes.push(item)
+    }
+
+    setOrderDishes([...orderDishes])
+  }
+
+  const handleDeleteItem = (item) => {
+    for (let index = 0; index < orderDishes.length; index++) {
+      if (orderDishes[index].id === item.id) {
+        orderDishes.splice(index, 1);
+        setOrderDishes([...orderDishes])
+        break;
+      }
+    }
+  }
 
   const handleChange = async (event, newValue) => {
     setValue(newValue);
@@ -150,13 +140,16 @@ export default function Home() {
 
           <Dishes dishes={dishes} onClick={handleOpen}/>
 
-          <OrderDrawer orders={orders}/>
+          <OrderDrawer 
+            orderDishes={orderDishes}
+            handleDeleteItem={handleDeleteItem}/>
       </Container>
 
       <ModalDish 
         selectedItem={selectedItem}
         handleOpen={handleOpen}
         handleClose={handleClose}
+        handleAddItem={handleAddItem}
         openModal={openModal}/>
     </div>
   )

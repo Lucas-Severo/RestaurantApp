@@ -9,6 +9,7 @@ import {
     Divider
 } from '@material-ui/core';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import CurrencyFormatter from '../utils/CurrencyFormatter';
 
 const orderWidth = 350
 const useStyles = makeStyles((theme) => ({
@@ -40,12 +41,12 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(2),
       fontWeight: 600,
       '&:nth-child(1)': {
-        paddingRight: theme.spacing(19.4)
+        paddingRight: theme.spacing(20.5)
       }
     },
     orderInfo: {
       display: 'flex',
-      width: '80%'
+      width: '65%'
     },
     info: {
       display: 'flex',
@@ -128,8 +129,18 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-export default function OrderDrawer({orders}) {
+export default function OrderDrawer({orderDishes, handleDeleteItem}) {
     const classes = useStyles();
+
+    const calculateTotal = () => {
+      let total = 0
+
+      for (let orderDish of orderDishes) {
+        total += (orderDish.quantity * orderDish.price)
+      }
+
+      return CurrencyFormatter.format(total)
+    }
 
     return (
         <Drawer 
@@ -139,7 +150,7 @@ export default function OrderDrawer({orders}) {
           classes={{
             paper: classes.orderDrawer
           }}>
-            <label className={classes.titleOrder}>Order #1111</label>
+            <label className={classes.titleOrder}>Order ({orderDishes.length})</label>
 
             <div className={classes.ordersColumns}>
               <label className={classes.orderColumn}>Item</label>
@@ -149,7 +160,7 @@ export default function OrderDrawer({orders}) {
 
             <Box display="flex" flexWrap="wrap" paddingBottom={16}>
               {
-                orders.map((order, index) => (
+                orderDishes.map((order, index) => (
                   <Card 
                     key={order.id}
                     variant="outlined"
@@ -162,15 +173,20 @@ export default function OrderDrawer({orders}) {
                               className={classes.itemImage}/>
                               <div className={classes.info}>
                                 <label className={`${classes.textEllipsis} ${classes.itemDescription}`}>{order.description}</label>
-                                <label className={classes.itemPrice}>{order.price}</label>
+                                <label 
+                                  className={classes.itemPrice}>
+                                    {CurrencyFormatter.format(order.price)}
+                                </label>
                               </div>
                             </div>
                             <div className={classes.itemQuantity}>
                               <label>{order.quantity}</label>
                             </div>
                             <div className={classes.totalItem}>
-                                <label className={classes.priceTotal}>{order.totalPrice}</label>
-                                <DeleteOutlineIcon className={classes.deleteIcon}/>
+                                <label className={classes.priceTotal}>{CurrencyFormatter.format(order.totalPrice)}</label>
+                                <DeleteOutlineIcon 
+                                  className={classes.deleteIcon}
+                                  onClick={() => handleDeleteItem(order)}/>
                             </div>
                         </CardContent>
                   </Card>
@@ -185,7 +201,7 @@ export default function OrderDrawer({orders}) {
                 </div>
                 <div className={`${classes.flexItem} ${classes.spaceBetween}`}>
                   <label className={classes.textGray}>Sub Total</label>
-                  <label className={classes.textWhite}>$ 21,03</label>
+                  <label className={classes.textWhite}>{calculateTotal()}</label>
                 </div>
                 <Button className={classes.buttonConfirmPayment} variant="contained" color="primary">
                   Continue to Payment
