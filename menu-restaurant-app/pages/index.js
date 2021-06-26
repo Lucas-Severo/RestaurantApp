@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { makeStyles } from '@material-ui/core/styles';
-import { Container } from '@material-ui/core';
+import { Container, Snackbar } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 import { useState, useEffect } from 'react';
 import DrawerLeft from './drawer-left';
 import TabOptions from './tabs';
@@ -50,6 +51,8 @@ export default function Home() {
   const [dishes, setDishes] = useState([])
   const [orderDishes, setOrderDishes] = useState([])
   const [value, setValue] = useState(0)
+  const [showAlertEmptyOrders, setShowAlertEmptyOrders] = useState(false)
+  const [showAlertSuccessfulOrder, setShowAlertSuccessfulOrder] = useState(false)
 
   useEffect(async () => {
     await buscarPratos()
@@ -103,11 +106,12 @@ export default function Home() {
         }
       }
 
-      dish.available--;
+      --dish.available
 
       if (!itemAlreadyAdded) {
         item.quantity = 1
         item.totalPrice = (item.quantity * item.price)
+        item.available = dish.available
         orderDishes.push(item)
       }
 
@@ -146,6 +150,34 @@ export default function Home() {
     await buscarPratos()
   };
 
+  const handleFinishOrder = async () => {
+    if (orderDishes.length == 0) {
+      setShowAlertEmptyOrders(true)
+    } else {
+      setShowAlertSuccessfulOrder(true)
+
+      await Promise.all([
+        updateItems(orderDishes)
+      ])
+
+      setOrderDishes([])
+    }
+  }
+
+  const handleCloseSnackbar = () => {
+    setShowAlertEmptyOrders(false)
+  }
+
+  const handleCloseSnackbarSucessfulOrder = () => {
+    setShowAlertSuccessfulOrder(false)
+  }
+
+  const updateItems = async(items) => {
+    for (let item of items) {
+      updateItem(item)
+    }
+  }
+
   const updateItem = async(item) => {
     await fetch(`http://localhost:1337/dishes/${item.id}`, {
       method: 'PUT',
@@ -157,13 +189,12 @@ export default function Home() {
   }
 
   return (
-    <div className={classes.scrollHide}>
+    <div>
       <Head>
         <title>Restaurante</title>
         <meta name="description" content="App de restaurante" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
       <Container maxWidth="xl" classes={{root: classes.root}} className={classes.appBar}>
           <DrawerLeft/>
           
@@ -182,7 +213,8 @@ export default function Home() {
 
           <OrderDrawer 
             orderDishes={orderDishes}
-            handleDeleteItem={handleDeleteItem}/>
+            handleDeleteItem={handleDeleteItem}
+            handleFinishOrder={handleFinishOrder}/>
       </Container>
 
       <ModalDish 
@@ -191,6 +223,38 @@ export default function Home() {
         handleClose={handleClose}
         handleAddItem={handleAddItem}
         openModal={openModal}/>
+
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        open={showAlertEmptyOrders}
+        onClose={handleCloseSnackbar}
+        autoHideDuration={2000}
+      >
+        <Alert
+          color="error"
+          severity="error">
+          Selecione pelo menos um item para continuar
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        open={showAlertSuccessfulOrder}
+        onClose={handleCloseSnackbarSucessfulOrder}
+        autoHideDuration={2000}
+      >
+        <Alert
+          color="success"
+          severity="success">
+          Venda realizada com sucesso!
+        </Alert>
+      </Snackbar>
     </div>
   )
 }

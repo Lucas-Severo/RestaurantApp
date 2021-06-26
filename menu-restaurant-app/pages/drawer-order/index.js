@@ -129,7 +129,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-export default function OrderDrawer({orderDishes, handleDeleteItem}) {
+export default function OrderDrawer({orderDishes, handleDeleteItem, handleFinishOrder}) {
     const classes = useStyles();
 
     const calculateTotal = () => {
@@ -203,7 +203,11 @@ export default function OrderDrawer({orderDishes, handleDeleteItem}) {
                   <label className={classes.textGray}>Sub Total</label>
                   <label className={classes.textWhite}>{calculateTotal()}</label>
                 </div>
-                <Button className={classes.buttonConfirmPayment} variant="contained" color="primary">
+                <Button 
+                  className={classes.buttonConfirmPayment} 
+                  variant="contained" 
+                  color="primary"
+                  onClick={handleFinishOrder}>
                   Continue to Payment
                 </Button>
               </CardContent>
