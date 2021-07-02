@@ -8,6 +8,9 @@ import TabOptions from './tabs';
 import Dishes from './dishes';
 import ModalDish from './modal-dish';
 import OrderDrawer from './drawer-order';
+import ItemApiRequest from './requests/ItemApiRequest';
+import OrderApiRequest from './requests/OrderApiRequest';
+import OrderItemApiRequest from './requests/OrderItemApiRequest';
 
 const drawerWidth = 100
 const orderWidth = 350
@@ -50,13 +53,31 @@ export default function Home() {
   const [selectedItem, setSelectedItem] = useState({})
   const [dishes, setDishes] = useState([])
   const [orderDishes, setOrderDishes] = useState([])
+  const [orderDishesFromState, setOrderDishesFromState] = useState([])
   const [value, setValue] = useState(0)
   const [showAlertEmptyOrders, setShowAlertEmptyOrders] = useState(false)
   const [showAlertSuccessfulOrder, setShowAlertSuccessfulOrder] = useState(false)
 
   useEffect(async () => {
+    await getItemsFromLocalStorage()
+  }, [])
+
+  useEffect(async () => {
+    await buscarPratos()
+  }, [orderDishesFromState])
+
+  useEffect(async () => {
     await buscarPratos()
   }, [value])
+
+  async function getItemsFromLocalStorage() {
+    const response = localStorage.getItem('item')
+    const items = JSON.parse(response)
+    if (items) {
+      setOrderDishes(items)
+      setOrderDishesFromState(items) 
+    }
+  }
 
   async function buscarPratos() {
       const response = await fetch("http://localhost:1337/dishes?categoria="+categories[value])
@@ -117,6 +138,8 @@ export default function Home() {
 
       setOrderDishes([...orderDishes])
       setDishes([...dishes])
+
+      localStorage.setItem('item', JSON.stringify(orderDishes))
     }
   }
 
@@ -140,6 +163,7 @@ export default function Home() {
 
         orderDishes.splice(index, 1);
         setOrderDishes([...orderDishes])
+        localStorage.setItem('item', JSON.stringify(orderDishes))
         break;
       }
     }
@@ -151,17 +175,31 @@ export default function Home() {
   };
 
   const handleFinishOrder = async () => {
+    const totalPrice = orderDishes.reduce((acc, prox) => {
+      return acc + prox.totalPrice
+    }, 0)
+
     if (orderDishes.length == 0) {
       setShowAlertEmptyOrders(true)
     } else {
-      setShowAlertSuccessfulOrder(true)
+      const order = {
+        total: totalPrice,
+        discount: 0,
+        quantity: orderDishes.length
+      }
 
+      const orderCadastrado = await(await OrderApiRequest.cadastrarPedido(order)).json()
+      
       await Promise.all([
+        cadastrarOrderItens(orderDishes, orderCadastrado),
         updateItems(orderDishes)
       ])
 
+      setShowAlertSuccessfulOrder(true)
       setOrderDishes([])
     }
+
+    localStorage.removeItem('item');
   }
 
   const handleCloseSnackbar = () => {
@@ -172,20 +210,26 @@ export default function Home() {
     setShowAlertSuccessfulOrder(false)
   }
 
-  const updateItems = async(items) => {
-    for (let item of items) {
-      updateItem(item)
+  const cadastrarOrderItens = async (orderItens, order) => {
+    for (let orderItem of orderItens) {
+      const item = {
+        dish: orderItem.id,
+        order: order.id,
+        quantity: orderItem.quantity
+      }
+
+      OrderItemApiRequest.cadastrarOrderItem(item)
     }
   }
 
-  const updateItem = async(item) => {
-    await fetch(`http://localhost:1337/dishes/${item.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(item)
-    })
+  const updateItems = async (items) => {
+    for (let item of items) {
+      await updateItem(item)
+    }
+  }
+
+  const updateItem = async (item) => {
+    await ItemApiRequest.atualizarItem(item)
   }
 
   return (

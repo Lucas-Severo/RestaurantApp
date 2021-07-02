@@ -1,9 +1,8 @@
 {
   "kind": "collectionType",
-  "collectionName": "orders",
+  "collectionName": "order_items",
   "info": {
-    "name": "Order",
-    "description": ""
+    "name": "OrderItem"
   },
   "options": {
     "increments": true,
@@ -12,11 +11,11 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "discount": {
-      "type": "decimal"
+    "dish": {
+      "model": "dish"
     },
-    "total": {
-      "type": "decimal"
+    "order": {
+      "model": "order"
     },
     "quantity": {
       "type": "integer"

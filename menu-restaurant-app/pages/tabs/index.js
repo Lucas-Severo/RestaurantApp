@@ -46,11 +46,11 @@ export default function TabOptions({handleChange, value}) {
               variant="scrollable"
               aria-label="disabled tabs example"
             >
-              <TabDefaultWhite label="Hot Dishes"/>
-              <TabDefaultWhite label="Cold Dishes"/>
-              <TabDefaultWhite label="Soup" />
-              <TabDefaultWhite label="Brill" />
-              <TabDefaultWhite label="Dessert" />
+              <TabDefaultWhite label="Pratos Quentes"/>
+              <TabDefaultWhite label="Pratos Frios"/>
+              <TabDefaultWhite label="Sopa" />
+              <TabDefaultWhite label="Fritos" />
+              <TabDefaultWhite label="Sobremesa" />
             </Tabs>
             <DividerWhite light/>
         </Paper>

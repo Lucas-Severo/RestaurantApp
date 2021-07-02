@@ -98,8 +98,8 @@ export default function ModalDish({selectedItem, openModal, handleClose, handleA
               className={classes.dishImage}/>
             <div className={classes.modalDetail}>
               <label>{selectedItem.description}</label>
-              <label>Price: {CurrencyFormatter.format(selectedItem.price)}</label>
-              <label>Available quantity: {selectedItem.available}</label>
+              <label>Preço: {CurrencyFormatter.format(selectedItem.price)}</label>
+              <label>Quantidade disponível: {selectedItem.available}</label>
             </div>
             <Button 
               variant="outlined" 

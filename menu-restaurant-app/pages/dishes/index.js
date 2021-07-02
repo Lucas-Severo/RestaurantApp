@@ -47,6 +47,13 @@ const useStyles = makeStyles((theme) => ({
       top: -55,
       marginBottom: -20,
       margin: '0 auto'
+    },
+    scroll: {
+        height: 'calc(100vh - 215px)',
+        overflow: 'auto',
+        '&::-webkit-scrollbar': {
+            width: '0.4em'
+        }
     }
 }))
 
@@ -57,10 +64,10 @@ export default function Dishes({dishes, onClick}) {
     return (
         <div className={classes.dishesContainer}>
             <label className={classes.dishesTitle}>
-                Choose Dishes ({dishes.length})
+                Selecione os pratos ({dishes.length})
             </label>
 
-            <Box display="flex" flexWrap="wrap">
+            <Box display="flex" flexWrap="wrap" className={classes.scroll}>
                 {
                 dishes.map((dish, index) => (
                     <Card 
@@ -76,7 +83,7 @@ export default function Dishes({dishes, onClick}) {
                             className={classes.dishImage}/>
                             <label className={classes.dishName}>{dish.description}</label>
                             <label>{CurrencyFormatter.format(dish.price)}</label>
-                            <label>{dish.available} available</label>
+                            <label>{dish.available} disponíveis</label>
                         </CardContent>
                     </Card>
                 ))

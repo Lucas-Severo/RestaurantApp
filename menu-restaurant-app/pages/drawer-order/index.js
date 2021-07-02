@@ -126,6 +126,12 @@ const useStyles = makeStyles((theme) => ({
     },
     buttonConfirmPayment: {
       color: '#FFF'
+    },
+    scroll: {
+      overflow: 'auto',
+      '&::-webkit-scrollbar': {
+        width: '0.4em'
+      }
     }
 }))
 
@@ -143,22 +149,27 @@ export default function OrderDrawer({orderDishes, handleDeleteItem, handleFinish
     }
 
     return (
-        <Drawer 
+        (
+          orderDishes && <Drawer 
           anchor={"right"} 
           variant="permanent"
-          open 
+          open
           classes={{
             paper: classes.orderDrawer
           }}>
-            <label className={classes.titleOrder}>Order ({orderDishes.length})</label>
+            <label className={classes.titleOrder}>Pedido ({orderDishes.length})</label>
 
             <div className={classes.ordersColumns}>
               <label className={classes.orderColumn}>Item</label>
               <label className={classes.orderColumn}>Qtd</label>
-              <label className={classes.orderColumn}>Price</label>
+              <label className={classes.orderColumn}>Preço</label>
             </div>
 
-            <Box display="flex" flexWrap="wrap" paddingBottom={16}>
+            <Box 
+              display="flex" 
+              flexWrap="wrap" 
+              paddingBottom={16}
+              className={classes.scroll}>
               {
                 orderDishes.map((order, index) => (
                   <Card 
@@ -196,7 +207,7 @@ export default function OrderDrawer({orderDishes, handleDeleteItem, handleFinish
               <Divider/>
               <CardContent className={`${classes.orderItemPaymentLayout}`}>
                 <div className={`${classes.flexItem} ${classes.spaceBetween}`}>
-                  <label className={classes.textGray}>Discount</label>
+                  <label className={classes.textGray}>Desconto</label>
                   <label className={classes.textWhite}>$0</label>
                 </div>
                 <div className={`${classes.flexItem} ${classes.spaceBetween}`}>
@@ -208,10 +219,11 @@ export default function OrderDrawer({orderDishes, handleDeleteItem, handleFinish
                   variant="contained" 
                   color="primary"
                   onClick={handleFinishOrder}>
-                  Continue to Payment
+                  Continuar para pagamento
                 </Button>
               </CardContent>
             </Card>
         </Drawer>
+        )
     )
 }
