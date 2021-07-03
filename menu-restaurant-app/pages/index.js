@@ -57,6 +57,7 @@ export default function Home() {
   const [value, setValue] = useState(0)
   const [showAlertEmptyOrders, setShowAlertEmptyOrders] = useState(false)
   const [showAlertSuccessfulOrder, setShowAlertSuccessfulOrder] = useState(false)
+  const [showNotAvailableQuantity, setShowNotAvailableQuantity] = useState(false)
 
   useEffect(async () => {
     await getItemsFromLocalStorage()
@@ -133,6 +134,7 @@ export default function Home() {
         item.quantity = 1
         item.totalPrice = (item.quantity * item.price)
         item.available = dish.available
+        item.totalAvailable = dish.available
         orderDishes.push(item)
       }
 
@@ -140,6 +142,8 @@ export default function Home() {
       setDishes([...dishes])
 
       localStorage.setItem('item', JSON.stringify(orderDishes))
+    } else {
+      setShowNotAvailableQuantity(true)
     }
   }
 
@@ -190,7 +194,7 @@ export default function Home() {
 
       const orderCadastrado = await(await OrderApiRequest.cadastrarPedido(order)).json()
       
-      await Promise.all([
+      Promise.all([
         cadastrarOrderItens(orderDishes, orderCadastrado),
         updateItems(orderDishes)
       ])
@@ -210,6 +214,10 @@ export default function Home() {
     setShowAlertSuccessfulOrder(false)
   }
 
+  const handleCloseSnackbarNotAvailableQuantity = () => {
+    setShowNotAvailableQuantity(false)
+  }
+
   const cadastrarOrderItens = async (orderItens, order) => {
     for (let orderItem of orderItens) {
       const item = {
@@ -224,12 +232,60 @@ export default function Home() {
 
   const updateItems = async (items) => {
     for (let item of items) {
-      await updateItem(item)
+      updateItem(item)
     }
   }
 
   const updateItem = async (item) => {
-    await ItemApiRequest.atualizarItem(item)
+    ItemApiRequest.atualizarItem(item)
+  }
+
+  const incrementItem = (order) => {
+    const dish = getDishByItem(order)
+  
+    if ((order.totalAvailable - order.quantity) >= 0) {
+      for (let dish of orderDishes) {
+        if (dish.id === order.id) {
+          ++dish.quantity
+          dish.totalPrice = (dish.quantity * dish.price)
+          break
+        }
+      }
+
+      if (dish) {
+        --dish.available
+      }
+
+      setOrderDishes([...orderDishes])
+      setDishes([...dishes])
+
+      localStorage.setItem('item', JSON.stringify(orderDishes))
+    } else {
+      setShowNotAvailableQuantity(true)
+    }
+  }
+
+  const decrementItem = (order) => {
+    const dish = getDishByItem(order)
+
+    if (order.quantity > 1) {
+      for (let dish of orderDishes) {
+        if (dish.id === order.id) {
+          --dish.quantity
+          dish.totalPrice = (dish.quantity * dish.price)
+          break
+        }
+      }
+
+      if (dish) {
+        ++dish.available
+      }
+
+      setOrderDishes([...orderDishes])
+      setDishes([...dishes])
+
+      localStorage.setItem('item', JSON.stringify(orderDishes))
+    }
   }
 
   return (
@@ -258,7 +314,9 @@ export default function Home() {
           <OrderDrawer 
             orderDishes={orderDishes}
             handleDeleteItem={handleDeleteItem}
-            handleFinishOrder={handleFinishOrder}/>
+            handleFinishOrder={handleFinishOrder}
+            incrementItem={incrementItem}
+            decrementItem={decrementItem}/>
       </Container>
 
       <ModalDish 
@@ -281,6 +339,22 @@ export default function Home() {
           color="error"
           severity="error">
           Selecione pelo menos um item para continuar
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        open={showNotAvailableQuantity}
+        onClose={handleCloseSnackbarNotAvailableQuantity}
+        autoHideDuration={2000}
+      >
+        <Alert
+          color="error"
+          severity="error">
+          O item não possui mais quantidade disponível
         </Alert>
       </Snackbar>
 

@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
     },
     orderLayout: {
       display: 'flex',
+      flexDirection: 'column',
       width: '100%'
     },
     ordersColumns: {
@@ -41,19 +42,19 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(2),
       fontWeight: 600,
       '&:nth-child(1)': {
-        paddingRight: theme.spacing(20.5)
+        paddingRight: theme.spacing(20)
       }
     },
     orderInfo: {
       display: 'flex',
-      width: '65%'
+      width: '100%'
     },
     info: {
       display: 'flex',
       flexDirection: 'column',
     },
     textEllipsis: {
-      width: 130,
+      width: 140,
       whiteSpace: 'nowrap',
       overflow: 'hidden',
       textOverflow: 'ellipsis'
@@ -88,8 +89,7 @@ const useStyles = makeStyles((theme) => ({
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
-      alignItems: 'center',
-      gap: 4
+      alignItems: 'center'
     },
     deleteIcon: {
       width: 40,
@@ -132,10 +132,14 @@ const useStyles = makeStyles((theme) => ({
       '&::-webkit-scrollbar': {
         width: '0.4em'
       }
+    },
+    quantityButton: {
+      width: 10,
+      marginRight: 10
     }
 }))
 
-export default function OrderDrawer({orderDishes, handleDeleteItem, handleFinishOrder}) {
+export default function OrderDrawer({orderDishes, handleDeleteItem, handleFinishOrder, incrementItem, decrementItem}) {
     const classes = useStyles();
 
     const calculateTotal = () => {
@@ -180,8 +184,8 @@ export default function OrderDrawer({orderDishes, handleDeleteItem, handleFinish
                         <CardContent className={`${classes.orderLayout}`}>
                             <div className={classes.orderInfo}>
                               <Avatar
-                              src={order.imageRendered}
-                              className={classes.itemImage}/>
+                                src={order.imageRendered}
+                                className={classes.itemImage}/>
                               <div className={classes.info}>
                                 <label className={`${classes.textEllipsis} ${classes.itemDescription}`}>{order.description}</label>
                                 <label 
@@ -189,16 +193,36 @@ export default function OrderDrawer({orderDishes, handleDeleteItem, handleFinish
                                     {CurrencyFormatter.format(order.price)}
                                 </label>
                               </div>
-                            </div>
-                            <div className={classes.itemQuantity}>
-                              <label>{order.quantity}</label>
-                            </div>
-                            <div className={classes.totalItem}>
+                              <div className={classes.itemQuantity}>
+                                <label>{order.quantity}</label>
+                              </div>
+                              <div className={classes.totalItem}>
                                 <label className={classes.priceTotal}>{CurrencyFormatter.format(order.totalPrice)}</label>
-                                <DeleteOutlineIcon 
-                                  className={classes.deleteIcon}
-                                  onClick={() => handleDeleteItem(order)}/>
+                              </div>
                             </div>
+                            <Box display="flex" 
+                                alignItems="center"
+                                justifyContent="space-between">
+                                  <div>
+                                    <Button
+                                      className={classes.quantityButton}
+                                      color="primary" 
+                                      variant="outlined"
+                                      onClick={() => incrementItem(order)}>
+                                        +
+                                    </Button>
+                                    <Button
+                                      className={classes.quantityButton}
+                                      color="primary" 
+                                      variant="outlined"
+                                      onClick={() => decrementItem(order)}>
+                                        -
+                                    </Button>
+                                  </div>
+                              <DeleteOutlineIcon
+                                className={classes.deleteIcon}
+                                onClick={() => handleDeleteItem(order)}/>
+                            </Box>
                         </CardContent>
                   </Card>
                 ))}
